@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import { requireAuth, validateRequest } from '@phill-sdk/common';
 import { Product } from '../models/product';
-import { TicketCreatedPublisher } from '../events/publishers/product-created-publisher';
+import { ProductCreatedPublisher } from '../events/publishers/product-created-publisher';
 import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
@@ -30,7 +30,7 @@ router.post(
     });
     await product.save();
 
-    new TicketCreatedPublisher(natsWrapper.client).publish({
+    new ProductCreatedPublisher(natsWrapper.client).publish({
       id: product.id,
       name: product.name,
       price: product.price,
