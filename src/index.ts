@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { app } from './app';
 import { natsWrapper } from './nats-wrapper';
+import { ProductSyncCompleteListener } from './events/listeners/product-sync-complete-listener';
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -38,6 +39,8 @@ const start = async () => {
       useCreateIndex: true,
     });
     console.log('Connected to MongoDb');
+
+    new ProductSyncCompleteListener(natsWrapper.client).listen();
   } catch (err) {
     console.error(err);
   }
