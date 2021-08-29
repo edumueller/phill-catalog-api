@@ -16,6 +16,10 @@ interface ProductDoc extends mongoose.Document {
 
 interface ProductModel extends mongoose.Model<ProductDoc> {
   build(attrs: ProductAttrs): ProductDoc;
+  findByEvent(event: {
+    id: string;
+    version: number;
+  }): Promise<ProductDoc | null>;
 }
 
 const productSchema = new mongoose.Schema(
@@ -45,6 +49,15 @@ const productSchema = new mongoose.Schema(
 productSchema.set('versionKey', 'version');
 productSchema.plugin(updateIfCurrentPlugin);
 
+productSchema.statics.findByEvent = (event: {
+  id: string;
+  version: number;
+}) => {
+  return Product.findOne({
+    _id: event.id,
+    version: event.version,
+  });
+};
 productSchema.statics.build = (attrs: ProductAttrs) => {
   return new Product(attrs);
 };
