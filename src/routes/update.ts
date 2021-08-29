@@ -29,6 +29,7 @@ router.put(
       name: req.body.name,
       price: req.body.price,
       quantity: req.body.quantity,
+      syncCompletedAt: null,
     });
     await product.save();
 
