@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import { validateRequest, NotFoundError, requireAuth } from '@phill-sdk/common';
 import { Product } from '../models/product';
+import { natsWrapper } from '../nats-wrapper';
+import { ProductUpdatedPublisher } from '../events/publishers/product-updated-publisher';
 
 const router = express.Router();
 
@@ -32,6 +34,15 @@ router.put(
       syncCompletedAt: null,
     });
     await product.save();
+
+    // Publish product updated event
+    new ProductUpdatedPublisher(natsWrapper.client).publish({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: product.quantity,
+      version: product.version,
+    });
 
     res.send(product);
   }
