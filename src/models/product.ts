@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 interface ProductAttrs {
+  id?: string;
   name: string;
   price: number;
   quantity: number;
